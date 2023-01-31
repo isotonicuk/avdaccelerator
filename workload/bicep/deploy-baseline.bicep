@@ -7,7 +7,7 @@ targetScope = 'subscription'
 @minLength(2)
 @maxLength(4)
 @description('Required. The name of the resource group to deploy.')
-param deploymentPrefix string = ''
+param deploymentPrefix string = 'rg-prod-avd1'
 
 @description('Optional. Location where to deploy compute services. (Default: eastus2)')
 param avdSessionHostLocation string = 'eastus2'
@@ -16,13 +16,13 @@ param avdSessionHostLocation string = 'eastus2'
 param avdManagementPlaneLocation string = 'eastus2'
 
 @description('Required. AVD workload subscription ID, multiple subscriptions scenario.')
-param avdWorkloadSubsId string = ''
+param avdWorkloadSubsId string = '2820ff07-405a-49c6-b74b-d78825165e02'
 
 @description('Required. Azure Virtual Desktop Enterprise Application object ID. ')
-param avdEnterpriseAppObjectId string = ''
+param avdEnterpriseAppObjectId string = '9cdead84-a844-4324-93f2-b2e6bb768d07'
 
 @description('Required. AVD session host local username.')
-param avdVmLocalUserName string = ''
+param avdVmLocalUserName string = 'avdadmin'
 
 @description('Required. AVD session host local password.')
 @secure()
@@ -34,7 +34,7 @@ param avdVmLocalUserPassword string = ''
     'AAD' // Azure AD Join
 ])
 @description('Required, The service providing domain services for Azure Virtual Desktop. (Defualt: ADDS)')
-param avdIdentityServiceProvider string = 'ADDS'
+param avdIdentityServiceProvider string = 'AAD'
 
 @description('Required, Eronll session hosts on Intune. (Defualt: false)')
 param createIntuneEnrollment bool = false
@@ -68,7 +68,7 @@ param avdOuPath string = ''
     'Pooled'
 ])
 @description('Optional. AVD host pool type. (Default: Pooled)')
-param avdHostPoolType string = 'Pooled'
+param avdHostPoolType string = 'Personal'
 
 @allowed([
     'Automatic'
@@ -96,8 +96,8 @@ param createStartVmOnConnectCustomRole bool = true
 @description('Optional. AVD deploy remote app application group. (Default: false)')
 param avdDeployRappGroup bool = false
 
-@description('Optional. AVD host pool Custom RDP properties. (Default: audiocapturemode:i:1;audiomode:i:0;drivestoredirect:s:;redirectclipboard:i:1;redirectcomports:i:1;redirectprinters:i:1;redirectsmartcards:i:1;screen mode id:i:2)')
-param avdHostPoolRdpProperties string = 'audiocapturemode:i:1;audiomode:i:0;drivestoredirect:s:;redirectclipboard:i:1;redirectcomports:i:1;redirectprinters:i:1;redirectsmartcards:i:1;screen mode id:i:2'
+@description('Optional. AVD host pool Custom RDP properties. (Default: audiocapturemode:i:1;audiomode:i:0;drivestoredirect:s:;redirectclipboard:i:0;redirectcomports:i:1;redirectprinters:i:1;redirectsmartcards:i:1;screen mode id:i:2)')
+param avdHostPoolRdpProperties string = 'audiocapturemode:i:1;audiomode:i:0;drivestoredirect:s:;redirectclipboard:i:1;redirectcomports:i:1;redirectprinters:i:1;redirectsmartcards:i:1;screen mode id:i:2;redirectwebauthn:i:1'
 
 @description('Optional. AVD deploy scaling plan. (Default: true)')
 param avdDeployScalingPlan bool = true
@@ -200,13 +200,13 @@ param avdSessionHostDiskType string = 'Standard_LRS'
     'ConfidentialVM'
 ])
 @description('Optional. Specifies the securityType of the virtual machine. "ConfidentialVM" and "TrustedLaunch" require a Gen2 Image. (Default: Standard)')
-param securityType string = 'Standard'
+param securityType string = 'TrustedLaunch'
 
 @description('Optional. Specifies whether secure boot should be enabled on the virtual machine. This parameter is part of the UefiSettings. securityType should be set to TrustedLaunch or ConfidentialVM to enable UefiSettings. (Default: false)')
-param secureBootEnabled bool = false
+param secureBootEnabled bool = true
 
 @description('Optional. Specifies whether vTPM should be enabled on the virtual machine. This parameter is part of the UefiSettings.  securityType should be set to TrustedLaunch or ConfidentialVM to enable UefiSettings. (Default: false)')
-param vTpmEnabled bool = false
+param vTpmEnabled bool = true
 
 @allowed([
     'win10_21h2'
@@ -219,7 +219,7 @@ param vTpmEnabled bool = false
     'win11_22h2_office'
 ])
 @description('Optional. AVD OS image source. (Default: win10-21h2)')
-param avdOsImage string = 'win10_21h2'
+param avdOsImage string = 'win10_22h2_office_g2'
 
 @description('Optional. Set to deploy image from Azure Compute Gallery. (Default: false)')
 param useSharedImage bool = false
@@ -239,84 +239,84 @@ param createOuForStorage bool = false
 param avdUseCustomNaming bool = false
 
 @maxLength(90)
-@description('Optional. AVD service resources resource group custom name. (Default: rg-avd-use2-app1-service-objects)')
-param avdServiceObjectsRgCustomName string = 'rg-avd-use2-app1-service-objects'
+@description('Optional. AVD service resources resource group custom name. (Default: prod-avd1-app1-service-objects)')
+param avdServiceObjectsRgCustomName string = 'rg-prod-avd1-app1-service-objects'
 
 @maxLength(90)
-@description('Optional. AVD network resources resource group custom name. (Default: rg-avd-use2-app1-network)')
-param avdNetworkObjectsRgCustomName string = 'rg-avd-use2-app1-network'
+@description('Optional. AVD network resources resource group custom name. (Default: rg-prod-avd-app1-network)')
+param avdNetworkObjectsRgCustomName string = 'rg-prod-avd1-app1-network'
 
 @maxLength(90)
-@description('Optional. AVD network resources resource group custom name. (Default: rg-avd-use2-app1-pool-compute)')
-param avdComputeObjectsRgCustomName string = 'rg-avd-use2-app1-pool-compute'
+@description('Optional. AVD network resources resource group custom name. (Default: rg-prod-avd-app1-pool-compute)')
+param avdComputeObjectsRgCustomName string = 'rg-prod-avd-app1-per-compute'
 
 @maxLength(90)
-@description('Optional. AVD network resources resource group custom name. (Default: rg-avd-use2-app1-storage)')
-param avdStorageObjectsRgCustomName string = 'rg-avd-use2-app1-storage'
+@description('Optional. AVD network resources resource group custom name. (Default: -rg-prod-avd1--app1-storage)')
+param avdStorageObjectsRgCustomName string = '-rg-prod-avd1-app1-storage'
 
 @maxLength(90)
-@description('Optional. AVD monitoring resource group custom name. (Default: rg-avd-use2-app1-monitoring)')
-param avdMonitoringRgCustomName string = 'rg-avd-use2-app1-monitoring'
+@description('Optional. AVD monitoring resource group custom name. (Default: --prod-avd1-app1-monitoring)')
+param avdMonitoringRgCustomName string = 'rg-prod-avd1-app1-monitoring'
 
 @maxLength(64)
-@description('Optional. AVD virtual network custom name. (Default: vnet-avd-use2-app1-001)')
-param avdVnetworkCustomName string = 'vnet-avd-use2-app1-001'
+@description('Optional. AVD virtual network custom name. (Default: vnet-avd-app1-001)')
+param avdVnetworkCustomName string = 'vnet-prod-avd1-app1-001'
 
 @maxLength(64)
-@description('Optional. AVD Azure log analytics workspace custom name. (Default: log-avd-use2-app1-001)')
-param avdAlaWorkspaceCustomName string = 'log-avd-use2-app1-001'
+@description('Optional. AVD Azure log analytics workspace custom name. (Default: log-avd-app1-001)')
+param avdAlaWorkspaceCustomName string = 'log-prod-avd1-app1-001'
 
 //@maxLength(24)
 //@description('Optional. Azure Storage Account custom name for NSG flow logs. (Default: stavduse2flowlogs001)')
 //param avdStgAccountForFlowLogsCustomName string = 'stavduse2flowlogs001'
 
 @maxLength(80)
-@description('Optional. AVD virtual network subnet custom name. (Default: snet-avd-use2-app1-001)')
-param avdVnetworkSubnetCustomName string = 'snet-avd-use2-app1-001'
+@description('Optional. AVD virtual network subnet custom name. (Default: snet-avd-app1-001)')
+param avdVnetworkSubnetCustomName string = 'snet-prod-avd1-app1-001'
 
 @maxLength(80)
-@description('Optional. AVD network security group custom name. (Default: nsg-avd-use2-app1-001)')
-param avdNetworksecurityGroupCustomName string = 'nsg-avd-use2-app1-001'
+@description('Optional. AVD network security group custom name. (Default: nsg-avd-app1-001)')
+param avdNetworksecurityGroupCustomName string = 'nsg-prod-avd1-app1-001'
 
 @maxLength(80)
-@description('Optional. AVD route table custom name. (Default: route-avd-use2-app1-001)')
-param avdRouteTableCustomName string = 'route-avd-use2-app1-001'
+@description('Optional. AVD route table custom name. (Default: route-avd-app1-001)')
+param avdRouteTableCustomName string = 'route-prod-avd1-app1-001'
 
 @maxLength(80)
-@description('Optional. AVD application security custom name. (Default: asg-avd-use2-app1-001)')
-param avdApplicationSecurityGroupCustomName string = 'asg-avd-use2-app1-001'
+@description('Optional. AVD application security custom name. (Default: asg-avd-app1-001)')
+param avdApplicationSecurityGroupCustomName string = 'asg-prod-avd1-app1-001'
 
 @maxLength(64)
-@description('Optional. AVD workspace custom name. (Default: vdws-use2-app1-001)')
-param avdWorkSpaceCustomName string = 'vdws-use2-app1-001'
+@description('Optional. AVD workspace custom name. (Default: vdws-app1-001)')
+param avdWorkSpaceCustomName string = 'vdws-prod-avd1-app1-001'
 
 @maxLength(64)
 @description('Optional. AVD workspace custom friendly (Display) name. (Default: App1 - East US - 001)')
-param avdWorkSpaceCustomFriendlyName string = 'East US - 001'
+param avdWorkSpaceCustomFriendlyName string = 'AVD1 - East US - 001'
 
 @maxLength(64)
-@description('Optional. AVD host pool custom name. (Default: vdpool-use2-app1-001)')
-param avdHostPoolCustomName string = 'vdpool-use2-app1-001'
+@description('Optional. AVD host pool custom name. (Default: vdpool-app1-001)')
+param avdHostPoolCustomName string = 'avdpool-prod-app1-001'
 
 @maxLength(64)
 @description('Optional. AVD host pool custom friendly (Display) name. (Default: App1 - East US - 001)')
-param avdHostPoolCustomFriendlyName string = 'App1 - East US - 001'
+param avdHostPoolCustomFriendlyName string = 'avdpool-prod-app1-001-fn'
 
 @maxLength(64)
-@description('Optional. AVD scaling plan custom name. (Default: vdscaling-use2-app1-001)')
-param avdScalingPlanCustomName string = 'vdscaling-use2-app1-001'
+@description('Optional. AVD scaling plan custom name. (Default: vdscaling-app1-001)')
+param avdScalingPlanCustomName string = 'vdscaling-prod-app1-001'
 
 @maxLength(64)
-@description('Optional. AVD desktop application group custom name. (Default: vdag-desktop-use2-app1-001)')
-param avdApplicationGroupCustomNameDesktop string = 'vdag-desktop-use2-app1-001'
+@description('Optional. AVD desktop application group custom name. (Default: vdag-desktop-app1-001)')
+param avdApplicationGroupCustomNameDesktop string = 'vdag-prod-desktop-app1-001'
 
 @maxLength(64)
 @description('Optional. AVD desktop application group custom friendly (Display) name. (Default: Desktops - App1 - East US - 001)')
-param avdApplicationGroupCustomFriendlyName string = 'Desktops - App1 - East US - 001'
+param avdApplicationGroupCustomFriendlyName string = 'Desktops - rb81 - East US - 001'
 
 @maxLength(64)
-@description('Optional. AVD remote application group custom name. (Default: vdag-rapp-use2-app1-001)')
-param avdApplicationGroupCustomNameRapp string = 'vdag-rapp-use2-app1-001'
+@description('Optional. AVD remote application group custom name. (Default: vdag-rapp-app1-001)')
+param avdApplicationGroupCustomNameRapp string = 'vdag-prod-rapp-app1-001'
 
 @maxLength(64)
 @description('Optional. AVD remote application group custom name. (Default: Remote apps - App1 - East US - 001)')
@@ -344,16 +344,16 @@ param avdFslogixProfileContainerFileShareCustomName string = 'fslogix-pc-app1-00
 
 @maxLength(6)
 @description('Optional. AVD keyvault prefix custom name. (Default: kv-avd)')
-param avdWrklKvPrefixCustomName string = 'kv-avd'
+param avdWrklKvPrefixCustomName string = 'kv-avd1'
 //
 
 // Resource tagging
 // 
 @description('Optional. Apply tags on resources and resource groups. (Default: false)')
-param createResourceTags bool = false
+param createResourceTags bool = true
 
-@description('Optional. The name of workload for tagging purposes. (Default: Contoso-Workload)')
-param workloadNameTag string = 'Contoso-Workload'
+@description('Optional. The name of workload for tagging purposes. (Default: rb81-Workload)')
+param workloadNameTag string = 'rb81-Workload'
 
 @allowed([
     'Light'
@@ -374,8 +374,8 @@ param workloadTypeTag string = 'Light'
 @description('Optional. Sensitivity of data hosted (Default: Non-business)')
 param dataClassificationTag string = 'Non-business'
 
-@description('Optional. Department that owns the deployment, (Dafult: Contoso-AVD)')
-param departmentTag string = 'Contoso-AVD'
+@description('Optional. Department that owns the deployment, (Dafult: rb81-AVD)')
+param departmentTag string = 'rb81-AVD1'
 
 @allowed([
     'Low'
@@ -387,23 +387,23 @@ param departmentTag string = 'Contoso-AVD'
 @description('Optional. Criticality of the workload. (Default: Low)')
 param workloadCriticalityTag string = 'Low'
 
-@description('Optional. Tag value for custom criticality value. (Default: Contoso-Critical)')
-param workloadCriticalityCustomValueTag string = 'Contoso-Critical'
+@description('Optional. Tag value for custom criticality value. (Default: rb81-Critical)')
+param workloadCriticalityCustomValueTag string = 'rb81-Critical'
 
 @description('Optional. Details about the application.')
-param applicationNameTag string = 'Contoso-App'
+param applicationNameTag string = 'rb81-App'
 
-@description('Required. Service level agreement level of the worload. (Contoso-SLA)')
-param workloadSlaTag string = 'Contoso-SLA'
+@description('Required. Service level agreement level of the worload. (rb81-SLA)')
+param workloadSlaTag string = 'rb81-SLA'
 
-@description('Optional. Team accountable for day-to-day operations. (workload-admins@Contoso.com)')
-param opsTeamTag string = 'workload-admins@Contoso.com'
+@description('Optional. Team accountable for day-to-day operations. (workload-admins@rb81.com)')
+param opsTeamTag string = 'workload-admins@rb81.com'
 
-@description('Optional. Organizational owner of the AVD deployment. (Default: workload-owner@Contoso.com)')
-param ownerTag string = 'workload-owner@Contoso.com'
+@description('Optional. Organizational owner of the AVD deployment. (Default: workload-owner@rb81.com)')
+param ownerTag string = 'workload-owner@rb81.com'
 
-@description('Optional. Cost center of owner team. (Defualt: Contoso-CC)')
-param costCenterTag string = 'Contoso-CC'
+@description('Optional. Cost center of owner team. (Defualt: rb81-CC)')
+param costCenterTag string = 'rb81-CC'
 
 @allowed([
     'Prod'
@@ -411,7 +411,7 @@ param costCenterTag string = 'Contoso-CC'
     'Staging '
 ])
 @description('Optional. Deployment environment of the application, workload. (Default: Dev)')
-param environmentTypeTag string = 'Dev'
+param environmentTypeTag string = 'Prod'
 //
 
 @description('Do not modify, used to set unique value for resource deployment.')
