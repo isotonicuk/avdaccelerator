@@ -1,5 +1,7 @@
 # Welcome to the Azure Virtual Desktop (AVD) Landing Zone Accelerator
 
+[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/azure/avdaccelerator.svg)](http://isitmaintained.com/project/azure/avdaccelerator "Average time to resolve an issue") [![Percentage of issues still open](http://isitmaintained.com/badge/open/azure/avdaccelerator.svg)](http://isitmaintained.com/project/azure/avdaccelerator "Percentage of issues still open")
+
 ## Overview
 
 Enterprise-scale is an architectural approach and a reference implementation that enables effective construction and operation of landing zones on Azure, at scale. This approach aligns with the Azure roadmap and the Cloud Adoption Framework for Azure.
@@ -15,11 +17,9 @@ As of today, we have a first reference implementation scenario that is one of th
 
 ## Getting Started
 
-Head over to [Getting Started](/workload/docs/getting-started.md) to review prerequisites and deployment options.
-
 ## AVD Accelerator Baseline
 
-Deploy Azure Virtual Desktop (AVD) resources and dependent services for establishing the baseline
+[Getting Started](/workload/docs/getting-started-baseline.md) deploying Azure Virtual Desktop (AVD) resources and dependent services for establishing the baseline
 
 - AVD resources: workspace, two (2) application groups and host pool
 - [Optional]: new virtual network (VNet) with baseline NSG and route table
@@ -28,13 +28,13 @@ Deploy Azure Virtual Desktop (AVD) resources and dependent services for establis
 
 | Deployment Type | Link |
 |:--|:--|
-| Azure portal UI | [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Favdaccelerator%2Fmain%2Fworkload%2Farm%2Fdeploy-baseline.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Favdaccelerator%2Fmain%2Fworkload%2Fportal-ui%2Fportal-ui-baseline.json) |
+| Azure portal UI |[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Favdaccelerator%2Fmain%2Fworkload%2Farm%2Fdeploy-baseline.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Favdaccelerator%2Fmain%2Fworkload%2Fportal-ui%2Fportal-ui-baseline.json) [![Deploy to Azure Gov](https://aka.ms/deploytoazuregovbutton)](https://portal.azure.us/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Favdaccelerator%2Fmain%2Fworkload%2Farm%2Fdeploy-baseline.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Favdaccelerator%2Fmain%2Fworkload%2Fportal-ui%2Fportal-ui-baseline.json)|
 | Command line (Bicep/ARM) | [![Powershell/Azure CLI](./workload/docs/icons/powershell.png)](https://github.com/Azure/avdaccelerator/blob/main/workload/bicep/readme.md) |
 | Terraform | [![Terraform](./workload/docs/icons/terraform.png)](https://github.com/Azure/avdaccelerator/blob/main/workload/terraform/greenfield/readme.md) |
 
 ## Optional: Custom Image Build
 
-Deploy a custom image based on the latest version of the Azure marketplace image to an Azure Compute Gallery. The following images are offered: 
+[Getting Started](/workload/docs/getting-started-custom-image-build.md) deploying a custom image based on the latest version of the Azure marketplace image to an Azure Compute Gallery. The following images are offered: 
  - Windows 10 21H2
  - Windows 10 22H2 (Gen 2)
  - Windows 11 21H2 (Gen 2)

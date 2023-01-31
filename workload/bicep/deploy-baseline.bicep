@@ -452,6 +452,10 @@ var varLocationAcronyms = {
     canadaeast: 'cae'
     uksouth: 'uks'
     ukwest: 'ukw'
+    usgovarizona: 'az'
+    usgoviowa: 'ia'
+    usgovtexas: 'tx'
+    usgovvirginia: 'va'
     westcentralus: 'wcus'
     westus2: 'wus2'
     koreacentral: 'krc'
@@ -539,7 +543,7 @@ var varAvdServiceObjectsRgName = avdUseCustomNaming ? avdServiceObjectsRgCustomN
 var varAvdNetworkObjectsRgName = avdUseCustomNaming ? avdNetworkObjectsRgCustomName : 'rg-avd-${varAvdComputeStorageResourcesNamingStandard}-network' // max length limit 90 characters
 var varAvdComputeObjectsRgName = avdUseCustomNaming ? avdComputeObjectsRgCustomName : 'rg-avd-${varAvdComputeStorageResourcesNamingStandard}-pool-compute' // max length limit 90 characters
 var varAvdStorageObjectsRgName = avdUseCustomNaming ? avdStorageObjectsRgCustomName : 'rg-avd-${varAvdComputeStorageResourcesNamingStandard}-storage' // max length limit 90 characters
-var varAvdMonitoringRgName = avdUseCustomNaming ? avdMonitoringRgCustomName : 'rg-avd-${varAvdSessionHostLocationAcronym}-monitoring' // max length limit 90 characters
+var varAvdMonitoringRgName = avdUseCustomNaming ? avdMonitoringRgCustomName : 'rg-avd-${varAvdManagementPlaneLocationAcronym}-monitoring' // max length limit 90 characters
 //var varAvdSharedResourcesRgName = 'rg-${varAvdSessionHostLocationAcronym}-avd-shared-resources'
 var varAvdVnetworkName = avdUseCustomNaming ? avdVnetworkCustomName : 'vnet-avd-${varAvdComputeStorageResourcesNamingStandard}-001'
 var varAvdVnetworkSubnetName = avdUseCustomNaming ? avdVnetworkSubnetCustomName : 'snet-avd-${varAvdComputeStorageResourcesNamingStandard}-001'
@@ -718,7 +722,7 @@ var varFsLogixScript = './Set-FSLogixRegKeys.ps1'
 var varFslogixSharePath = '\\\\${varAvdFslogixStorageName}.file.${environment().suffixes.storage}\\${varAvdFslogixProfileContainerFileShareName}'
 var varFsLogixScriptArguments = '-volumeshare ${varFslogixSharePath}'
 var varAvdAgentPackageLocation = 'https://wvdportalstorageblob.blob.${environment().suffixes.storage}/galleryartifacts/Configuration_09-08-2022.zip'
-var varStorageAccountContributorRoleId = 'b24988ac-6180-42a0-ab88-20f7382dd24c'
+var varStorageAccountContributorRoleId = '17d1049b-9a84-46fb-8f53-869881c3d3ab'
 var varReaderRoleId = 'acdd72a7-3385-48ef-bd42-f606fba81ae7'
 var varAvdVmPowerStateContributor = '40c5ff49-9181-41f8-ae61-143b0e78555e'
 var varDscAgentPackageLocation = 'https://github.com/Azure/avdaccelerator/raw/main/workload/scripts/DSCStorageScripts.zip'
@@ -888,7 +892,7 @@ module validation 'avd-modules/avd-validation.bicep' = {
 
 // Azure Policies for monitoring Diagnostic settings. Performance couunters on new or existing Log Analytics workspace. New workspace if needed.
 module deployMonitoringDiagnosticSettings './avd-modules/avd-monitoring.bicep' = if (avdDeployMonitoring) {
-    name: 'Deploy-AVD-Monitoring-${time}'
+    name: 'Monitoring-${time}'
     params: {
         avdManagementPlaneLocation: avdManagementPlaneLocation
         deployAlaWorkspace: deployAlaWorkspace
@@ -923,7 +927,7 @@ module deployAzurePolicyNetworking './avd-modules/avd-azure-policy-networking.bi
 
 // Networking.
 module avdNetworking 'avd-modules/avd-networking.bicep' = if (createAvdVnet) {
-    name: 'Deploy-AVD-Networking-${time}'
+    name: 'Networking-${time}'
     params: {
         avdApplicationSecurityGroupName: varAvdApplicationSecurityGroupName
         avdComputeObjectsRgName: varAvdComputeObjectsRgName
@@ -953,7 +957,7 @@ module avdNetworking 'avd-modules/avd-networking.bicep' = if (createAvdVnet) {
 
 // AVD management plane.
 module avdManagementPLane 'avd-modules/avd-management-plane.bicep' = {
-    name: 'Deploy-AVD-HostPool-AppGroups-${time}'
+    name: 'HostPool-AppGroups-${time}'
     params: {
         avdApplicationGroupNameDesktop: varAvdApplicationGroupNameDesktop
         avdApplicationGroupFriendlyNameDesktop: varAvdApplicationGroupFriendlyName
@@ -994,7 +998,7 @@ module avdManagementPLane 'avd-modules/avd-management-plane.bicep' = {
 
 // Identity: managed identities and role assignments.
 module deployAvdManagedIdentitiesRoleAssign 'avd-modules/avd-identity.bicep' = {
-    name: 'Create-Managed-ID-RoleAssign-${time}'
+    name: 'Managed-ID-RoleAssign-${time}'
     params: {
         avdComputeObjectsRgName: varAvdComputeObjectsRgName
         avdDeploySessionHosts: avdDeploySessionHosts
@@ -1024,7 +1028,7 @@ module deployAvdManagedIdentitiesRoleAssign 'avd-modules/avd-identity.bicep' = {
 // Key vault.
 module avdWrklKeyVault '../../carml/1.2.0/Microsoft.KeyVault/vaults/deploy.bicep' = if (avdDeploySessionHosts) {
     scope: resourceGroup('${avdWorkloadSubsId}', '${varAvdServiceObjectsRgName}')
-    name: 'AVD-Workload-KeyVault-${time}'
+    name: 'Workload-KeyVault-${time}'
     params: {
         name: varAvdWrklKvName
         location: avdSessionHostLocation
@@ -1115,7 +1119,7 @@ resource avdWrklKeyVaultget 'Microsoft.KeyVault/vaults@2021-06-01-preview' exist
 
 // Storage.
 module deployAvdStorageAzureFiles 'avd-modules/avd-storage-azurefiles.bicep' = if (varCreateAvdFslogixDeployment && avdDeploySessionHosts && (avdIdentityServiceProvider != 'AAD')) {
-    name: 'Deploy-AVD-Storage-AzureFiles-${time}'
+    name: 'Storage-Azure-Files-${time}'
     params: {
         avdIdentityServiceProvider: avdIdentityServiceProvider
         storageToDomainScript:  varStorageToDomainScript
@@ -1167,7 +1171,7 @@ module deployAvdStorageAzureFiles 'avd-modules/avd-storage-azurefiles.bicep' = i
 
 // Session hosts.
 module deployAndConfigureAvdSessionHosts './avd-modules/avd-session-hosts-batch.bicep' = if (avdDeploySessionHosts) {
-    name: 'Deploy-and-Configure-AVD-SessionHosts-${time}'
+    name: 'Session-Hosts-${time}'
     params: {
         avdAgentPackageLocation: varAvdAgentPackageLocation
         avdTimeZone: varTimeZones[avdSessionHostLocation]
@@ -1202,7 +1206,6 @@ module deployAndConfigureAvdSessionHosts './avd-modules/avd-session-hosts-batch.
         encryptionAtHost: encryptionAtHost
         createAvdFslogixDeployment: (avdIdentityServiceProvider != 'AAD') ? varCreateAvdFslogixDeployment: false
         fslogixManagedIdentityResourceId:  (varCreateAvdFslogixDeployment && (avdIdentityServiceProvider != 'AAD'))  ? deployAvdManagedIdentitiesRoleAssign.outputs.fslogixManagedIdentityResourceId : ''
-        //fslogixManagedIdentityResourceId:  (varCreateAvdFslogixDeployment && (avdIdentityServiceProvider != 'AAD'))  ? deployAvdManagedIdentitiesRoleAssign.outputs.fslogixManagedIdentityResourceId : 'none'
         fsLogixScript: (avdIdentityServiceProvider != 'AAD') ? varFsLogixScript: ''
         FsLogixScriptArguments: (avdIdentityServiceProvider != 'AAD') ? varFsLogixScriptArguments: ''
         fslogixScriptUri: (avdIdentityServiceProvider != 'AAD') ? varFslogixScriptUri: ''
