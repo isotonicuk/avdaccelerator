@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "deploymentPrefix": {
-            "value": "<<deploymentPrefix>>"
+            "value": "AVD1"
         },
         "avdWorkloadSubsId": {
             "value": "<<subscriptionId>>"
@@ -14,8 +14,8 @@
         "avdVmLocalUserPassword": {
             "value": "<<localUserPassword>>"
         },
-        "avdIdentityDomainName": {
-            "value": "<<domainName>>"
+        "identityDomainName": {
+            "value": "none"
         },
         "avdDomainJoinUserName": {
             "value": "<<domainJoinUserName>>"

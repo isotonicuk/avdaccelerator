@@ -26,6 +26,16 @@ variable "rg_avdi" {
   description = "Name of the Resource group in which to deploy avd service objects"
 }
 
+variable "identity_rg" {
+  type        = string
+  description = "Name of the Resource group in which to identity resources are deployed"
+}
+
+variable "identity_vnet" {
+  type        = string
+  description = "Name of the vnet in which to identity resources are deployed"
+}
+
 variable "vnet" {
   type        = string
   description = "Name of avd vnet"
@@ -41,11 +51,11 @@ variable "pesnet" {
   description = "Name of subnet"
 }
 
-variable "ad_rg" {
+variable "hub_connectivity_rg" {
   type        = string
   description = "The resource group for AD VM"
 }
-variable "ad_vnet" {
+variable "hub_vnet" {
   type        = string
   description = "Name of domain controller vnet"
 }
@@ -69,6 +79,16 @@ variable "dag" {
   description = "Name of the Azure Virtual Desktop desktop application group"
 }
 
+variable "rag" {
+  type        = string
+  description = "Name of the Azure Virtual Desktop remote application group"
+}
+
+variable "pag" {
+  type        = string
+  description = "Name of the Azure Virtual Desktop remote application group"
+}
+
 variable "scplan" {
   type        = string
   description = "Name of the session host scaling plan"
@@ -89,9 +109,29 @@ variable "workspace" {
   description = "Name of the Azure Virtual Desktop workspace"
 }
 
+variable "pworkspace" {
+  type        = string
+  description = "Name of the Azure Virtual Desktop Personal workspace"
+}
+
 variable "hostpool" {
   type        = string
   description = "Name of the Azure Virtual Desktop host pool"
+}
+
+variable "personalpool" {
+  type        = string
+  description = "Name of the Azure Virtual Desktop host pool"
+}
+
+variable "raghostpool" {
+  type        = string
+  description = "Name of the Azure Virtual Desktop remote app group"
+}
+
+variable "ragworkspace" {
+  type        = string
+  description = "Name of the Azure Virtual Desktop workspace"
 }
 
 variable "dns_servers" {
@@ -110,7 +150,7 @@ variable "subnet_range" {
 
 variable "aad_group_name" {
   type        = string
-  description = "Azure Active Directory Group for AVD users"
+  description = "Microsoft Entra ID Group for AVD users"
 }
 
 variable "rdsh_count" {
@@ -166,6 +206,16 @@ variable "spoke_subscription_id" {
   description = "Spoke Subscription id"
 }
 
+variable "identity_subscription_id" {
+  type        = string
+  description = "Spoke Subscription id"
+}
+
+variable "avdshared_subscription_id" {
+  type        = string
+  description = "Spoke Subscription id"
+}
+
 variable "host_pool_log_categories" {
   description = "value of the log categories to be enabled for the host pool"
 }
@@ -176,4 +226,18 @@ variable "dag_log_categories" {
 
 variable "ws_log_categories" {
   description = "value of the log categories to be enabled for the host pool"
+}
+
+variable "next_hop_ip" {
+  type        = string
+  description = "Next hop IP address"
+}
+
+variable "fw_policy" {
+  type        = string
+  description = "Name of the firewall policy"
+}
+
+variable "hub_dns_zone_rg" {
+  description = "The resource group for the hub DNS zone"
 }

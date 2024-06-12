@@ -26,9 +26,9 @@ variable "rg_avdi" {
   description = "Name of the Resource group in which to deploy avd service objects"
 }
 
-
-variable "rg_fslogix" {
-  description = "Resource group FSLogix VM"
+variable "identity_rg" {
+  type        = string
+  description = "Name of the Resource group in which to identity resources are deployed"
 }
 
 variable "vnet" {
@@ -54,6 +54,11 @@ variable "nsg" {
 variable "rt" {
   type        = string
   description = "Name of the route table"
+}
+
+variable "identity_vnet" {
+  type        = string
+  description = "Name of the vnet in which to identity resources are deployed"
 }
 
 variable "dag" {
@@ -86,11 +91,6 @@ variable "rg_shared_name" {
   description = "Name of the Resource group in which to deploy shared resources"
 }
 
-variable "rg_image_name" {
-  type        = string
-  description = "Name of the Resource group in which to deploy image resources"
-}
-
 variable "workspace" {
   type        = string
   description = "Name of the Azure Virtual Desktop workspace"
@@ -116,7 +116,7 @@ variable "ragworkspace" {
   description = "Name of the Azure Virtual Desktop workspace"
 }
 
-variable "ad_vnet" {
+variable "hub_vnet" {
   type        = string
   description = "Name of domain controller vnet"
 }
@@ -140,18 +140,20 @@ variable "pesubnet_range" {
   description = "Address range for private endpoints subnet"
 }
 
-variable "ad_rg" {
+variable "hub_connectivity_rg" {
   type        = string
-  description = "The resource group for AD VM"
+  description = "The resource group for hub connectivity resources"
 }
 
+/*
 variable "avd_users" {
   description = "AVD users"
 }
+*/
 
 variable "aad_group_name" {
   type        = string
-  description = "Azure Active Directory Group for AVD users"
+  description = "Microsoft Entra ID Group for AVD users"
 }
 
 variable "rdsh_count" {
@@ -196,12 +198,6 @@ variable "local_admin_username" {
   description = "local admin username"
 }
 
-variable "local_admin_password" {
-  type        = string
-  description = "local admin password"
-  sensitive   = true
-}
-
 variable "image_name" {
   type        = string
   description = "Name of the custome image to use"
@@ -211,7 +207,6 @@ variable "gallery_name" {
   type        = string
   description = "Name of the shared image gallery name"
 }
-
 variable "image_rg" {
   type        = string
   description = "Image Gallery resource group"
@@ -233,63 +228,40 @@ variable "spoke_subscription_id" {
   description = "Spoke Subscription id"
 }
 
-
-variable "file_name" {
-  description = "The name of the PowerShell script that the CustomScriptExtention runs"
+variable "identity_subscription_id" {
+  type        = string
+  description = "identity Subscription id"
 }
 
-variable "file_url" {
-  description = "The URL for the file_name"
+variable "avdshared_subscription_id" {
+  type        = string
+  description = "Spoke Subscription id"
 }
 
-variable "dsc_path" {
-  description = "Path to download the dsc script from"
+variable "host_pool_log_categories" {
+  description = "value of the log categories to be enabled for the host pool"
 }
 
-variable "id_provider" {
-  description = "The Identity Provider for FsLogix."
-  validation {
-    condition     = contains(["ADDS", "AAD, AADDS"], var.id_provider)
-    error_message = "Valid values are ADDS, AAD or AADDS."
-  }
+variable "dag_log_categories" {
+  description = "value of the log categories to be enabled for the host pool"
 }
 
-variable "azure_cloud_environment" {
-  description = "The Azure Cloud Environment"
-  validation {
-    condition     = contains(["AzureCloud", "AzureGovCloud"], var.azure_cloud_environment)
-    error_message = "Valid values are AzureCloud or AzureGovCloud."
-  }
+variable "ws_log_categories" {
+  description = "value of the log categories to be enabled for the host pool"
 }
 
-variable "domain_admin_user" {
-  description = "The name of the user to join the FSLogix Storage Account to the domain. Format: User@domain.TLD"
+
+variable "hub_dns_zone_rg" {
+  description = "The resource group for the hub DNS zone"
 }
 
-variable "domain_admin_password" {
-  description = "The password of the user to join the FsLogix Storage Account to the domain. "
+# variables for firewall policy 
+variable "next_hop_ip" {
+  type        = string
+  description = "Next hop IP address"
 }
 
-variable "custom_ou" {
-  description = "If false, the storage account will be joined to the default computer OU"
-  default     = "true"
-  validation {
-    condition     = contains(["true", "false"], var.custom_ou)
-    error_message = "Valid values: true or false."
-
-  }
-}
-
-variable "create_new_ou" {
-  description = "If true, the OU in the OU_name variable will be created"
-  default     = "false"
-  validation {
-    condition     = contains(["true", "false"], var.create_new_ou)
-    error_message = "Valid values: true or false."
-  }
-
-}
-
-variable "fslogix_sharename" {
-  description = "The name of the FsLogix File share name"
+variable "fw_policy" {
+  type        = string
+  description = "Name of the firewall policy"
 }

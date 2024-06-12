@@ -1,15 +1,18 @@
-resource "azurerm_firewall_policy" "fw_policy" {
-  name                = "AVD-FW-Policy"
-  resource_group_name = var.rg_network
-  location            = var.avdLocation
-  tags                = var.tags
-  sku                 = "Premium"
-
+data "azurerm_firewall_policy" "fw_policy" {
+  name                = var.fw_policy
+  resource_group_name = var.hub_connectivity_rg
+  provider            = azurerm.hub
 }
 resource "azurerm_firewall_policy_rule_collection_group" "fw_policy_rule_collection_group" {
-  name               = "AVD-FW-RCG"
-  firewall_policy_id = azurerm_firewall_policy.fw_policy.id
+  name               = "fwpol-avd-${var.prefix}-rcg"
+  firewall_policy_id = data.azurerm_firewall_policy.fw_policy.id
   priority           = 100
+  provider           = azurerm.hub
+
+  depends_on = [
+    data.azurerm_firewall_policy.fw_policy
+  ]
+
 
   ### Required Network Rules for AVD
   network_rule_collection {

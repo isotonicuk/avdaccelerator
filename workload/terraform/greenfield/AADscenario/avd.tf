@@ -16,7 +16,7 @@ resource "azurerm_virtual_desktop_host_pool" "hostpool" {
   name                     = "${var.hostpool}-${substr(var.avdLocation, 0, 5)}-${var.prefix}"
   friendly_name            = "${var.hostpool}-${substr(var.avdLocation, 0, 5)}-${var.prefix}"
   validate_environment     = true
-  custom_rdp_properties    = "drivestoredirect:s:*;audiomode:i:0;videoplaybackmode:i:1;redirectclipboard:i:1;redirectprinters:i:1;devicestoredirect:s:*;redirectcomports:i:1;redirectsmartcards:i:1;usbdevicestoredirect:s:*;enablecredsspsupport:i:1;redirectwebauthn:i:1;use multimon:i:1;targetisaadjoined:i:1;enablerdsaadauth:i:1;autoreconnection enabled:i:1"
+  custom_rdp_properties    = "drivestoredirect:s:*;audiomode:i:0;videoplaybackmode:i:1;redirectclipboard:i:1;redirectprinters:i:1;devicestoredirect:s:*;redirectcomports:i:1;redirectsmartcards:i:1;usbdevicestoredirect:s:*;enablecredsspsupport:i:1;redirectwebauthn:i:1;use multimon:i:0;targetisaadjoined:i:1;enablerdsaadauth:i:1;autoreconnection enabled:i:1"
   description              = "${var.prefix} Pooled HostPool"
   type                     = "Pooled"
   maximum_sessions_allowed = 16
@@ -43,7 +43,7 @@ resource "azurerm_role_assignment" "power" {
   name                             = random_uuid.example.result
   scope                            = azurerm_resource_group.rg.id
   role_definition_id               = data.azurerm_role_definition.power_role.role_definition_id
-  principal_id                     = data.azuread_service_principal.spn.application_id
+  principal_id                     = data.azuread_service_principal.spn.object_id
   skip_service_principal_aad_check = true
   depends_on                       = [data.azurerm_role_definition.power_role]
 }
@@ -98,7 +98,7 @@ resource "azurerm_virtual_desktop_scaling_plan" "scplan" {
   }
   tags = local.tags
 
-  depends_on = [azurerm_role_assignment.power]
+  depends_on = [azurerm_role_assignment.power, azurerm_virtual_desktop_host_pool.hostpool]
 
   host_pool {
     hostpool_id          = azurerm_virtual_desktop_host_pool.hostpool.id
@@ -133,7 +133,7 @@ resource "azurerm_virtual_desktop_workspace_application_group_association" "ws-d
 
 # Get Log Analytics Workspace data
 data "azurerm_log_analytics_workspace" "lawksp" {
-  name                = lower(replace("law-avd-${var.prefix}", "-", ""))
+  name                = lower(replace("law-avd-${substr(var.avdLocation, 0, 5)}", "-", ""))
   resource_group_name = "rg-avd-${substr(var.avdLocation, 0, 5)}-${var.prefix}-${var.rg_avdi}"
 
   depends_on = [
@@ -141,7 +141,7 @@ data "azurerm_log_analytics_workspace" "lawksp" {
     azurerm_virtual_desktop_host_pool.hostpool,
     azurerm_virtual_desktop_application_group.dag,
     azurerm_virtual_desktop_workspace_application_group_association.ws-dag,
-    data.azurerm_log_analytics_workspace.lawksp
+    module.avdi
   ]
 }
 
@@ -155,31 +155,31 @@ resource "azurerm_monitor_diagnostic_setting" "avd-hp1" {
     data.azurerm_log_analytics_workspace.lawksp,
     azurerm_virtual_desktop_host_pool.hostpool
   ]
-  dynamic "log" {
+  dynamic "enabled_log" {
     for_each = var.host_pool_log_categories
     content {
-      category = log.value
-      enabled  = true
+      category = enabled_log.value
     }
   }
 }
 
 # Create Diagnostic Settings for AVD Desktop App Group
-resource "azurerm_monitor_diagnostic_setting" "avd-dag2" {
+resource "azurerm_monitor_diagnostic_setting" "avd-dag1" {
   name                       = "diag-avd-${var.prefix}"
   target_resource_id         = azurerm_virtual_desktop_application_group.dag.id
   log_analytics_workspace_id = data.azurerm_log_analytics_workspace.lawksp.id
 
   depends_on = [
-    data.azurerm_log_analytics_workspace.lawksp,
-    azurerm_virtual_desktop_application_group.dag
+    data.azurerm_log_analytics_workspace.lawksp
   ]
-  dynamic "log" {
+  dynamic "enabled_log" {
     for_each = var.dag_log_categories
     content {
-      category = log.value
-      enabled  = true
+      category = enabled_log.value
     }
+  }
+  lifecycle {
+    ignore_changes = [log]
   }
 }
 
@@ -193,11 +193,11 @@ resource "azurerm_monitor_diagnostic_setting" "avd-ws" {
     data.azurerm_log_analytics_workspace.lawksp,
     azurerm_virtual_desktop_workspace.workspace
   ]
-  dynamic "log" {
+
+  dynamic "enabled_log" {
     for_each = var.ws_log_categories
     content {
-      category = log.value
-      enabled  = true
+      category = enabled_log.value
     }
   }
 }

@@ -35,20 +35,20 @@
         "createIntuneEnrollment": {
             "value": false
         },            
-        "avdApplicationGroupIdentitiesIds": {
+        "securityPrincipalId": {
             "value": ""
-        },           
-        "avdApplicationGroupIdentityType": {
-            "value": "Group"
+        },        
+        "securityPrincipalName": {
+            "value": ""
         },       
-        "avdIdentityDomainName": {
-            "value": ""
+        "identityDomainName": {
+            "value": "none"
         },
         "avdDomainJoinUserName": {
-            "value": ""
+            "value": "none"
         },
         "avdDomainJoinUserPassword": {
-            "value": ""
+            "value": "none"
         },
         "avdOuPath": {
             "value": ""
@@ -56,23 +56,20 @@
         "avdHostPoolType": {
             "value": "Pooled"
         },
+        "hostPoolPreferredAppGroupType": {
+            "value": "Desktop"
+        },
         "avdPersonalAssignType": {
             "value": "Automatic"
         },
         "avdHostPoolLoadBalancerType": {
             "value": "BreadthFirst"
         },
-        "avhHostPoolMaxSessions": {
-            "value": 15
+        "hostPoolMaxSessions": {
+            "value": 8
         },
         "avdStartVmOnConnect": {
             "value": true
-        },
-        "createStartVmOnConnectCustomRole": {
-            "value": true
-        },
-        "avdDeployRappGroup": {
-            "value": false
         },
         "avdHostPoolRdpProperties": {
             "value": "audiocapturemode:i:1;audiomode:i:0;drivestoredirect:s:;redirectclipboard:i:1;redirectcomports:i:1;redirectprinters:i:1;redirectsmartcards:i:1;screen mode id:i:2"
@@ -83,7 +80,10 @@
         "createAvdVnet": {
             "value": true
         },
-        "existingVnetSubnetResourceId": {
+        "existingVnetAvdSubnetResourceId": {
+            "value": ""
+        },
+        "existingVnetPrivateEndpointSubnetResourceId": {
             "value": ""
         },
         "existingHubVnetResourceId": {
@@ -92,14 +92,17 @@
         "avdVnetworkAddressPrefixes": {
             "value": "10.10.0.0/23"
         },
-        "avdVnetworkSubnetAddressPrefix": {
-            "value": "10.10.0.0/23"
+        "vNetworkAvdSubnetAddressPrefix": {
+            "value": "10.10.0.0/24"
+        },
+        "vNetworkPrivateEndpointSubnetAddressPrefix": {
+            "value": "10.10.1.0/27"
         },
         "customDnsIps": {
-            "value": "none"
+            "value": ""
         },
-        "avdVnetPrivateDnsZone": {
-            "value": true
+        "createPrivateDnsZones": {
+            "value": false
         },
         "avdVnetPrivateDnsZoneFilesId": {
             "value": "<<PrivateDnsZoneFilesId>>"
@@ -113,8 +116,14 @@
         "createAvdFslogixDeployment": {
             "value": true
         },
-        "avdFslogixFileShareQuotaSize": {
-            "value": 10
+        "createMsixDeployment": {
+            "value": false
+        },
+        "fslogixFileShareQuotaSize": {
+            "value": 1
+        },
+        "msixFileShareQuotaSize": {
+            "value": 1
         },
         "avdDeploySessionHosts": {
             "value": true
@@ -125,38 +134,44 @@
         "avdSessionHostCountIndex": {
             "value": 0
         },
-        "avdUseAvailabilityZones": {
+        "availabilityZonesCompute": {
             "value": true
         },
-        "avdAsFaultDomainCount": {
+        "zoneRedundantStorage": {
+            "value": false
+        },
+        "avsetFaultDomainCount": {
             "value": 2
         },
-        "avdAsUpdateDomainCount": {
+        "avsetUpdateDomainCount": {
             "value": 5
         },
-        "fslogixStorageSku": {
-            "value": "Premium_LRS"
+        "fslogixStoragePerformance": {
+            "value": "Premium"
         },
-        "encryptionAtHost": {
-            "value": false
+        "msixStoragePerformance": {
+            "value": "Premium"
         },
         "avdSessionHostsSize": {
             "value": "Standard_D2s_v3"
         },
         "avdSessionHostDiskType": {
-            "value": "Standard_LRS"
+            "value": "Premium_LRS"
         },
         "avdOsImage": {
-            "value": "win10_21h2"
+            "value": "win11_21h2"
+        },
+        "managementVmOsImage": {
+            "value": "winServer_2022_Datacenter_smalldisk_g2"
         },
         "securityType": {
-            "value": "Standard"
+            "value": "TrustedLaunch"
         },
         "secureBootEnabled": {
-            "value": false
+            "value": true
         },
         "vTpmEnabled": {
-            "value": false
+            "value": true
         },
         "useSharedImage": {
             "value": false
@@ -167,23 +182,32 @@
         "storageOuPath": {
             "value": ""
         },
-        "createOuForStorage": {
-            "value": false
-        },
         "createResourceTags": {
             "value": false
         },
         "deployAlaWorkspace": {
             "value": true
-        },   
-        "deployCustomPolicyMonitoring": {
-            "value": false
         },  
         "alaExistingWorkspaceResourceId": {
             "value": ""
         },           
         "avdAlaWorkspaceDataRetention": {
             "value": 90
+        },
+        "enableAcceleratedNetworking": {
+            "value": true
+        },
+        "diskEncryptionKeyExpirationInDays": {
+            "value": 60
+        },
+        "diskZeroTrust": {
+            "value": false
+        },
+        "enableKvPurgeProtection": {
+            "value": true
+        },
+        "deployGpuPolicies": {
+            "value": false
         }
     }
 }

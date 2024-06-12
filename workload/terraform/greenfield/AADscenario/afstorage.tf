@@ -20,7 +20,16 @@ resource "azurerm_storage_account" "storage" {
   identity {
     type = "SystemAssigned"
   }
+  azure_files_authentication {
+    directory_type = "AADKERB"
+  }
+  lifecycle {
+    ignore_changes = [
+      customer_managed_key
+    ]
+  }
 }
+
 
 resource "azurerm_storage_share" "FSShare" {
   name             = "fslogix"
@@ -48,7 +57,7 @@ resource "azurerm_role_assignment" "af_role" {
 # Get Private DNS Zone for the Storage Private Endpoints
 data "azurerm_private_dns_zone" "pe-filedns-zone" {
   name                = "privatelink.file.core.windows.net"
-  resource_group_name = var.ad_rg
+  resource_group_name = var.hub_dns_zone_rg
   provider            = azurerm.hub
 }
 
@@ -56,7 +65,7 @@ resource "azurerm_private_endpoint" "afpe" {
   name                = "pe-${local.storage_name}-file"
   location            = azurerm_resource_group.rg_storage.location
   resource_group_name = azurerm_resource_group.rg_storage.name
-  subnet_id           = data.azurerm_subnet.subnet.id
+  subnet_id           = data.azurerm_subnet.pesubnet.id
   tags                = local.tags
 
   private_service_connection {
@@ -76,17 +85,18 @@ resource "azurerm_storage_account_network_rules" "stfw" {
   storage_account_id = azurerm_storage_account.storage.id
   default_action     = "Deny"
   bypass             = ["AzureServices", "Metrics", "Logging"]
-  ip_rules           = local.white_list_ip
+  ip_rules           = local.allow_list_ip
   depends_on = [azurerm_storage_share.FSShare,
     azurerm_private_endpoint.afpe,
   azurerm_role_assignment.af_role]
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "filelink" {
-  name                  = "azfilelink"
-  resource_group_name   = var.ad_rg
+  name                  = "azfilelink-${var.prefix}"
+  resource_group_name   = var.hub_dns_zone_rg
   private_dns_zone_name = data.azurerm_private_dns_zone.pe-filedns-zone.name
   virtual_network_id    = data.azurerm_virtual_network.vnet.id
+  provider              = azurerm.hub
 
   lifecycle { ignore_changes = [tags] }
 }
